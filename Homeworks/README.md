@@ -80,7 +80,7 @@ T^A_B &= T^A_O T^O_B \\
 &= {T^O_A}^{-1} T^O_B
 \end{align*}
 $$
-Therefore, the object's coordinate in the robot's frame is given by:
+Therefore, the object's pose in the robot's frame is given by:
 $$
 \begin{align*}
 
@@ -103,7 +103,41 @@ $$
 
 **Solution for Question 2:** 
 
-After the motion, the object is located at: ( , , )
+After the motion, the Robot's Frame transformation to its previous Frame can be represented as:
+$$
+T^A_{A^\prime} = 
+\begin{bmatrix} 
+\cos(\theta_d) & -\sin(\theta_d) & d \\
+\sin(\theta_d) & \cos(\theta_d) & 0 \\
+0 & 0 & 1 \\
+\end{bmatrix}
+$$
+Thus, transformation matrix from B to A is given by:
+$$
+\begin{align*}
+T^{A^\prime}_B &= T^{A^\prime}_A T^A_O T^O_B \\
+&= {T^A_{A^\prime}}^{-1} {T^O_A}^{-1} T^O_B
+\end{align*}
+$$
+Now the object's pose in the new frame is given by:
+$$
+\begin{align*}
+
+\begin{bmatrix} 
+x_{b,A^\prime} \\
+x_{b,A^\prime} \\
+\theta_{b,A^\prime}
+\end{bmatrix}
+
+&= \begin{bmatrix} 
+T^{A^\prime}_B(0,2) \\
+T^{A^\prime}_B(1,2) \\
+atan2(T^{A^\prime}_B(1,0), T^{A^\prime}_B(0,0)) \\
+\end{bmatrix} \\
+
+\end{align*}
+$$
+
 
 
 
