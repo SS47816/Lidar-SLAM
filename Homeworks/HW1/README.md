@@ -86,7 +86,7 @@ $$
 
 \begin{bmatrix} 
 x_{b,A} \\
-x_{b,A} \\
+y_{b,A} \\
 \theta_{b,A}
 \end{bmatrix}
 
@@ -125,7 +125,7 @@ $$
 
 \begin{bmatrix} 
 x_{b,A^\prime} \\
-x_{b,A^\prime} \\
+y_{b,A^\prime} \\
 \theta_{b,A^\prime}
 \end{bmatrix}
 
