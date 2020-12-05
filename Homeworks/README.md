@@ -47,13 +47,13 @@ The Turtle Sim was run successfully:
 
 **Given: **
 $$
-Robot\ A's\ Coordinate: [x_a, y_a, \theta_a]^T \\
-Object\ B's\ Coordinate: [x_b, y_b, \theta_b]^T \\
-in\ World\ Coordinate, denoted\ as\ O
+Robot\ A's\ Pose: [x_a, y_a, \theta_a]^T \\
+Object\ B's\ Pose: [x_b, y_b, \theta_b]^T \\
+(in\ World\ Frame,\ O)
 $$
 **Solution for Question 1:** 
 
-Transformation Matrix from Coordinate O to A:
+Transformation Matrix from A to World's Frame:
 $$
 T^O_A = 
 \begin{bmatrix} 
@@ -63,12 +63,38 @@ T^O_A =
 \end{bmatrix}
 $$
 
+Transformation Matrix from B to World's Frame:
+$$
+T^O_B = 
+\begin{bmatrix} 
+\cos(\theta_b) & -\sin(\theta_b) & x_b \\
+\sin(\theta_b) & \cos(\theta_b) & y_b \\
+0 & 0 & 1 \\
+\end{bmatrix}
+$$
 
-The object's coordinate in the robot's frame is given by:
+Transformation Matrix from B to A:
 $$
 \begin{align*}
-x_{b,A} &= T^A_O * [x_{b,O},\ 1]^T \\
-&= (, , )^T
+T^A_B &= T^A_O T^O_B \\
+&= {T^O_A}^{-1} T^O_B
+\end{align*}
+$$
+Therefore, the object's coordinate in the robot's frame is given by:
+$$
+\begin{align*}
+
+\begin{bmatrix} 
+x_{b,A} \\
+x_{b,A} \\
+\theta_{b,A}
+\end{bmatrix}
+
+&= \begin{bmatrix} 
+T^A_B(0,2) \\
+T^A_B(1,2) \\
+atan2(T^A_B(1,0), T^A_B(0,0)) \\
+\end{bmatrix} \\
 
 \end{align*}
 $$
