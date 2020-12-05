@@ -152,7 +152,7 @@ TOA << cos(A(2)), -sin(A(2)), A(0),
            0,          0,      1;
 
 Eigen::Matrix3d TBA = TBO * TOA;
-BA << TBA(0,2), TBA(1,2), acos(TBA(0,0));
+BA << TBA(0,2), TBA(1,2), atan2(TBA(1,0), TBA(0,0));
 ```
 
 And the result was `2, 1, 1.5708`:
