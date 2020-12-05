@@ -8,6 +8,8 @@ int main(int argc, char** argv)
 {
     // 机器人B在坐标系O中的坐标：
     Eigen::Vector3d B(3, 4, M_PI);
+    // 机器人A在坐标系O中的坐标：
+    Eigen::Vector3d A(1, 3, -M_PI / 2);
 
     // 坐标系B到坐标O的转换矩阵：
     Eigen::Matrix3d TOB;
@@ -17,9 +19,6 @@ int main(int argc, char** argv)
 
     // 坐标系O到坐标B的转换矩阵:
     Eigen::Matrix3d TBO = TOB.inverse();
-
-    // 机器人A在坐标系O中的坐标：
-    Eigen::Vector3d A(1, 3, -M_PI / 2);
 
     // 求机器人A在机器人B中的坐标：
     Eigen::Vector3d BA;
