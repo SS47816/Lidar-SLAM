@@ -45,10 +45,39 @@ The Turtle Sim was run successfully:
 
 ### Task 3
 
-Assuming Robot: (x_a, y_a, theta_a), Object: (x_b, y_b, theta_b), 
+**Given: **
+$$
+Robot\ A's\ Coordinate: [x_a, y_a, \theta_a]^T \\
+Object\ B's\ Coordinate: [x_b, y_b, \theta_b]^T \\
+in\ World\ Coordinate, denoted\ as\ O
+$$
+**Solution for Question 1:** 
 
-1. The object's coordinate in Robot's frame is given by: ( , , )
-2. After the motion, the object is located at: ( , , )
+Transformation Matrix from Coordinate O to A:
+$$
+T^O_A = 
+\begin{bmatrix} 
+\cos(\theta_a) & -\sin(\theta_a) & x_a \\
+\sin(\theta_a) & \cos(\theta_a) & y_a \\
+0 & 0 & 1 \\
+\end{bmatrix}
+$$
+
+
+The object's coordinate in the robot's frame is given by:
+$$
+\begin{align*}
+x_{b,A} &= T^A_O * [x_{b,O},\ 1]^T \\
+&= (, , )^T
+
+\end{align*}
+$$
+
+
+
+**Solution for Question 2:** 
+
+After the motion, the object is located at: ( , , )
 
 
 
@@ -59,8 +88,8 @@ The code implemented for transforming Robot B to coordinate A:
 ```c++
 Eigen::Matrix3d TOA;
 TOA << cos(A(2)), -sin(A(2)), A(0),
-sin(A(2)),  cos(A(2)), A(1),
-0,          0,      1;
+	   sin(A(2)),  cos(A(2)), A(1),
+           0,          0,      1;
 
 Eigen::Matrix3d TBA = TBO * TOA;
 BA << TBA(0,2), TBA(1,2), acos(TBA(0,0));
