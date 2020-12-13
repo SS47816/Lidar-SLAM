@@ -30,14 +30,11 @@ bool OdomCalib::Add_Data(Eigen::Vector3d Odom,Eigen::Vector3d scan)
         A_i << Odom(0), Odom(1), Odom(2), 0, 0, 0, 0, 0, 0,
                0, 0, 0, Odom(0), Odom(1), Odom(2), 0, 0, 0,
                0, 0, 0, 0, 0, 0, Odom(0), Odom(1), Odom(2);
-        A.conservativeResize(A.rows()+3, A.cols());
-        A.bottomRows(3) = A_i;
-
+        A.block(now_len, 0, 3, 9) = A_i;
+        b.segment(3*now_len, 3) = scan;
+        
         std::cout << "No. of lens: " << now_len << " / " << data_len << std::endl;
         std::cout << "Matrix A is of size " << A.rows() << "x" << A.cols() << std::endl;
-
-        b.conservativeResize(b.rows()+3, b.cols());
-        b.bottomRows(3) = scan;
         std::cout << "Vector b is of size " << b.rows() << "x" << b.cols() << std::endl;
 
         //end of TODO
@@ -60,9 +57,13 @@ Eigen::Matrix3d OdomCalib::Solve()
     Eigen::Matrix3d correct_matrix;
 
     //TODO: 求解线性最小二乘
-    Eigen::VectorXd result(9);
-    result = A.ldlt().solve(b);
-    correct_matrix << result;
+    std::cout << "Solving... " << std::endl;
+    Eigen::VectorXd x = A.topRows(3*now_len).householderQr().solve(b.topRows(3*now_len));
+    std::cout << "Solved! " << std::endl;
+    correct_matrix = Eigen::Matrix3d(x.data());
+    std::cout << x << std::endl;
+    std::cout << "Correction Matrix X is of size " << correct_matrix.rows() << "x" << correct_matrix.cols() << std::endl;
+    std::cout << correct_matrix << std::endl;
     //end of TODO
 
     return correct_matrix;
