@@ -30,13 +30,12 @@ bool OdomCalib::Add_Data(Eigen::Vector3d Odom,Eigen::Vector3d scan)
         A_i << Odom(0), Odom(1), Odom(2), 0, 0, 0, 0, 0, 0,
                0, 0, 0, Odom(0), Odom(1), Odom(2), 0, 0, 0,
                0, 0, 0, 0, 0, 0, Odom(0), Odom(1), Odom(2);
-        A.block(now_len, 0, 3, 9) = A_i;
+        A.block(3*now_len, 0, 3, 9) = A_i;
         b.segment(3*now_len, 3) = scan;
-        
         std::cout << "No. of lens: " << now_len << " / " << data_len << std::endl;
-        std::cout << "Matrix A is of size " << A.rows() << "x" << A.cols() << std::endl;
-        std::cout << "Vector b is of size " << b.rows() << "x" << b.cols() << std::endl;
-
+        // std::cout << A.topRows(3*now_len) << std::endl;
+        // std::cout << b.topRows(3*now_len) << std::endl;
+        
         //end of TODO
         now_len++;
         return true;
@@ -58,7 +57,9 @@ Eigen::Matrix3d OdomCalib::Solve()
 
     //TODO: 求解线性最小二乘
     std::cout << "Solving... " << std::endl;
-    Eigen::VectorXd x = A.topRows(3*now_len).householderQr().solve(b.topRows(3*now_len));
+    // Eigen::VectorXd x = A.topRows(3*now_len).householderQr().solve(b.topRows(3*now_len));
+    Eigen::VectorXd x = A.householderQr().solve(b);
+    // Eigen::VectorXd x = (A.topRows(3*now_len).transpose()*A.topRows(3*now_len)).inverse()*A.topRows(3*now_len).transpose()*b.topRows(3*now_len);
     std::cout << "Solved! " << std::endl;
     correct_matrix = Eigen::Matrix3d(x.data());
     std::cout << x << std::endl;
