@@ -109,7 +109,7 @@ public:
 };
 
 
-Eigen::Vector3d now_pos,last_pos;
+Eigen::Vector3d now_pos, last_pos;
 
 void Scan2:: pub_msg( Eigen::Vector3d& pose,nav_msgs::Path &path,ros::Publisher &mcu_path_pub_)
 {
@@ -349,13 +349,25 @@ void Scan2::scanCallBack(const sensor_msgs::LaserScan::ConstPtr &_laserScanMsg)
 //TODO:
 //求解得到两帧数据之间的位姿差
 //即求解当前位姿　在　上一时刻　坐标系中的坐标
-Eigen::Vector3d  cal_delta_distence(Eigen::Vector3d odom_pose)
+Eigen::Vector3d cal_delta_distence(Eigen::Vector3d odom_pose)
 {
 
     Eigen::Vector3d d_pos;  //return value
     now_pos = odom_pose;
 
     //TODO:
+    Eigen::Vector3d TOA, TOB, TAB;
+    TOA << cos(now_pos[2]), -sin(now_pos[2]), now_pos[0],
+           sin(now_pos[2]),  cos(now_pos[2]), now_pos[1],
+                  0,                0,             1;
+
+    TOB << cos(last_pos[2]), -sin(last_pos[2]), last_pos[0],
+           sin(last_pos[2]),  cos(last_pos[2]), last_pos[1],
+                  0,                0,             1;
+
+    TAB = TOA.inverse() * TOB;
+
+    d_pos << TAB[0, 2], TAB[1, 2], atan2(TAB[1, 0], TAB[0, 0]);
     //end of TODO:
 
     return d_pos;
