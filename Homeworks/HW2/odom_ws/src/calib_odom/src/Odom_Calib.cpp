@@ -23,9 +23,17 @@ Ax = b
 bool OdomCalib::Add_Data(Eigen::Vector3d Odom,Eigen::Vector3d scan)
 {
 
-    if(now_len<INT_MAX)
+    if(now_len < INT_MAX)
     {
         //TODO: 构建超定方程组
+        A = Eigen::Matrix3d();
+        A << Odom, Eigen::Vector3d::Zero(), Eigen::Vector3d::Zero(), 
+             Eigen::Vector3d::Zero(), Odom, Eigen::Vector3d::Zero(),
+             Eigen::Vector3d::Zero(), Eigen::Vector3d::Zero(), Odom;
+        std::cout << "Matrix A: " << std::endl;
+        std::cout << A << std::endl;
+
+        b = scan;
         //end of TODO
         now_len++;
         return true;
@@ -46,6 +54,7 @@ Eigen::Matrix3d OdomCalib::Solve()
     Eigen::Matrix3d correct_matrix;
 
     //TODO: 求解线性最小二乘
+    
     //end of TODO
 
     return correct_matrix;

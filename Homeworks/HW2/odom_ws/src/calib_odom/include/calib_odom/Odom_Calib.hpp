@@ -14,7 +14,7 @@ public:
         now_len = 0;
     }
 
-   // virtual ~OdomCalib();
+    // virtual ~OdomCalib();
     void Set_data_len(int len);
     bool Add_Data(Eigen::Vector3d Odom,Eigen::Vector3d scan);
     Eigen::Matrix3d Solve();
@@ -24,7 +24,7 @@ public:
 private:
     Eigen::MatrixXd  A;
     Eigen::VectorXd  b;
-    int data_len,now_len;
+    int data_len, now_len;
 
 };
 
