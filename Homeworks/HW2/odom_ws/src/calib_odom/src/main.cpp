@@ -356,7 +356,7 @@ Eigen::Vector3d cal_delta_distence(Eigen::Vector3d odom_pose)
     now_pos = odom_pose;
 
     //TODO:
-    Eigen::Vector3d TOA, TOB, TAB;
+    Eigen::Matrix3d TOA, TOB, TBA;
     TOA << cos(now_pos[2]), -sin(now_pos[2]), now_pos[0],
            sin(now_pos[2]),  cos(now_pos[2]), now_pos[1],
                   0,                0,             1;
@@ -365,9 +365,9 @@ Eigen::Vector3d cal_delta_distence(Eigen::Vector3d odom_pose)
            sin(last_pos[2]),  cos(last_pos[2]), last_pos[1],
                   0,                0,             1;
 
-    TAB = TOA.inverse() * TOB;
+    TBA = TOB.inverse() * TOA;
 
-    d_pos << TAB[0, 2], TAB[1, 2], atan2(TAB[1, 0], TAB[0, 0]);
+    d_pos << TBA(0, 2), TBA(1, 2), atan2(TBA(1, 0), TBA(0, 0));
     //end of TODO:
 
     return d_pos;
