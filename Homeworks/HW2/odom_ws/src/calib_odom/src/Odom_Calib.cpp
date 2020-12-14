@@ -58,7 +58,6 @@ Eigen::Matrix3d OdomCalib::Solve()
     //TODO: 求解线性最小二乘
     std::cout << "Solving... " << std::endl;
     Eigen::VectorXd x = A.topRows(3*now_len).householderQr().solve(b.topRows(3*now_len));
-    // Eigen::VectorXd x = A.householderQr().solve(b);
     std::cout << "Solved! " << std::endl;
     correct_matrix = Eigen::Matrix3d(x.data()).transpose();
     std::cout << x << std::endl;
