@@ -357,12 +357,12 @@ Eigen::Vector3d cal_delta_distence(Eigen::Vector3d odom_pose)
 
     //TODO:
     Eigen::Matrix3d TOA, TOB, TBA;
-    TOA << cos(now_pos[2]), -sin(now_pos[2]), now_pos[0],
-           sin(now_pos[2]),  cos(now_pos[2]), now_pos[1],
+    TOA << cos(now_pos(2)), -sin(now_pos(2)), now_pos(0),
+           sin(now_pos(2)),  cos(now_pos(2)), now_pos(1),
                   0,                0,             1;
 
-    TOB << cos(last_pos[2]), -sin(last_pos[2]), last_pos[0],
-           sin(last_pos[2]),  cos(last_pos[2]), last_pos[1],
+    TOB << cos(last_pos(2)), -sin(last_pos(2)), last_pos(0),
+           sin(last_pos(2)),  cos(last_pos(2)), last_pos(1),
                   0,                0,             1;
 
     TBA = TOB.inverse() * TOA;
