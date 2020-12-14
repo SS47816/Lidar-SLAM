@@ -166,7 +166,7 @@ int main(int argc, char** argv)
     double r_L;
     double r_R;
     //TODO: (3~5 lines)
-    b_wheel = (C.householderQr().solve(S)).coeff(0);
+    b_wheel = C.householderQr().solve(S)(0);
     r_L = b_wheel*J21J22(0);
     r_R = b_wheel*J21J22(1);
 
