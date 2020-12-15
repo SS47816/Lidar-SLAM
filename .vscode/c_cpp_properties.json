@@ -4,7 +4,9 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/usr/include/eigen3"
+                "/usr/include/eigen3",
+                "/opt/ros/**",
+                "/etc/ros/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
