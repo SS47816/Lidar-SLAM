@@ -27,3 +27,9 @@ The result I got was:
 
 
 ### Task 3: 
+
+SVD
+
+QR
+
+Normal Equations
