@@ -205,6 +205,16 @@ public:
             int& beam_number)
     {
        //TODO
+       for (int i = 0; i < beam_number; ++i)
+       {
+            auto range = ranges[startIndex+i];
+            auto theta = angles[startIndex+i];
+            double x = range*cos(theta);
+            double y = range*sin(theta);
+            
+            auto frame_mid_pose = frame_start_pose.
+
+        }
        //end of TODO
     }
 
@@ -216,7 +226,7 @@ public:
      * @name Lidar_Calibration()
      * @brief 激光雷达数据　分段线性进行差值　分段的周期为5ms
      * @param ranges 激光束的距离值集合
-     * @param angle　激光束的角度值集合
+     * @param angles　激光束的角度值集合
      * @param startTime　第一束激光的时间戳
      * @param endTime　最后一束激光的时间戳
      * @param *tf_
@@ -257,13 +267,13 @@ public:
 
         if(!getLaserPose(frame_start_pose, ros::Time(start_time /1000000.0), tf_))
         {
-            ROS_WARN("Not Start Pose,Can not Calib");
+            ROS_WARN("No Start Pose, Can not Calib");
             return ;
         }
 
         if(!getLaserPose(frame_end_pose,ros::Time(end_time / 1000000.0),tf_))
         {
-            ROS_WARN("Not End Pose, Can not Calib");
+            ROS_WARN("No End Pose, Can not Calib");
             return ;
         }
 
