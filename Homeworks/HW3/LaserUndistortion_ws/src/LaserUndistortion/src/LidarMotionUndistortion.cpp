@@ -236,8 +236,8 @@ public:
             // Construct the current Laser point pose
             auto& range = ranges[startIndex+i];
             auto& theta = angles[startIndex+i];
-            auto x = range*cos(theta);
-            auto y = range*sin(theta);
+            auto x = range*std::cos(theta);
+            auto y = range*std::sin(theta);
             tf::Pose laser_point = tf::Pose(
                 tf::createQuaternionFromYaw(theta), 
                 tf::Vector3(tfScalar(x), tfScalar(y), tfScalar(0))
@@ -247,7 +247,7 @@ public:
             tf::Pose laser_point_corrected = laser_point * T;
 
             // correct the raw readings
-            //auto qu = laser_point_corrected.getRotation();
+            // auto qu = laser_point_corrected.getRotation();
             auto t = laser_point_corrected.getOrigin();
             auto x_new = t.getX();
             auto y_new = t.getY();
