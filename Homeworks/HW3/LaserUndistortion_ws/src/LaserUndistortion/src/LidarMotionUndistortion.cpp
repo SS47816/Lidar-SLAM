@@ -207,12 +207,16 @@ public:
        //TODO
        for (int i = 0; i < beam_number; ++i)
        {
+            // transform to base
             auto range = ranges[startIndex+i];
             auto theta = angles[startIndex+i];
             double x = range*cos(theta);
             double y = range*sin(theta);
             
-            auto frame_mid_pose = frame_start_pose.
+            // linear interpolation
+            auto frame_mid_pose = frame_start_pose.lerp(frame_end_pose, i/beam_number);
+            
+            // transform back
 
         }
        //end of TODO
@@ -271,7 +275,7 @@ public:
             return ;
         }
 
-        if(!getLaserPose(frame_end_pose,ros::Time(end_time / 1000000.0),tf_))
+        if(!getLaserPose(frame_end_pose, ros::Time(end_time / 1000000.0),tf_))
         {
             ROS_WARN("No End Pose, Can not Calib");
             return ;
