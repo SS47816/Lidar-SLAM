@@ -219,8 +219,8 @@ public:
              */
             
             // Linear interpolation of R and t
-            auto mid_quat = start_quat.lerp(end_quat, tf::tfScalar(i/beam_number));
-            auto mid_tran = start_tran.lerp(end_tran, tf::tfScalar(i/beam_number));
+            auto mid_quat = start_quat.slerp(end_quat, tfScalar(i/beam_number));
+            auto mid_tran = start_tran.lerp(end_tran, tfScalar(i/beam_number));
             
             // Compose the current Pose
             tf::Pose frame_mid_pose = tf::Pose(mid_quat, mid_tran);
