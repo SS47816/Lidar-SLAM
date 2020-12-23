@@ -219,14 +219,14 @@ public:
              */
             
             // Linear interpolation of R and t
-            auto mid_quat = start_quat.slerp(end_quat, tfScalar(i/beam_number));
-            auto mid_tran = start_tran.lerp(end_tran, tfScalar(i/beam_number));
+            const auto mid_quat = start_quat.slerp(end_quat, tfScalar(i/(beam_number-1)));
+            const auto mid_tran = start_tran.lerp(end_tran, tfScalar(i/(beam_number-1)));
             
             // Compose the current Pose
-            tf::Pose frame_mid_pose = tf::Pose(mid_quat, mid_tran);
+            const tf::Pose frame_mid_pose = tf::Pose(mid_quat, mid_tran);
 
             // Construct the Transform from the current pose to base pose
-            auto T = frame_base_pose.inverseTimes(frame_mid_pose);
+            const tf::Pose T = frame_base_pose.inverseTimes(frame_mid_pose);
             
             /** Step 2: 
              * Determine the current Laser point Pose in current frame
@@ -236,21 +236,20 @@ public:
             // Construct the current Laser point pose
             auto& range = ranges[startIndex+i];
             auto& theta = angles[startIndex+i];
-            auto x = range*std::cos(theta);
-            auto y = range*std::sin(theta);
-            tf::Pose laser_point = tf::Pose(
-                tf::createQuaternionFromYaw(theta), 
+            const auto x = range*std::cos(theta);
+            const auto y = range*std::sin(theta);
+            const tf::Pose laser_point = tf::Pose(
+                tf::createQuaternionFromYaw(0),
                 tf::Vector3(tfScalar(x), tfScalar(y), tfScalar(0))
             );
 
             // Transform this laser points to base frame
             tf::Pose laser_point_corrected = laser_point * T;
 
-            // correct the raw readings
-            // auto qu = laser_point_corrected.getRotation();
-            auto t = laser_point_corrected.getOrigin();
-            auto x_new = t.getX();
-            auto y_new = t.getY();
+            // Correct the raw readings
+            const auto t = laser_point_corrected.getOrigin();
+            const auto x_new = t.getX();
+            const auto y_new = t.getY();
             range = std::sqrt(std::pow(x_new,2) + std::pow(y_new,2));
             theta = std::atan2(y_new, x_new);
 
@@ -332,8 +331,8 @@ public:
                 //终点的位姿
                 if(!getLaserPose(frame_mid_pose, ros::Time(mid_time/1000000.0), tf_))
                 {
-                    ROS_ERROR("Mid %d Pose Error",cnt);
-                    return ;
+                    ROS_ERROR("Mid %d Pose Error", cnt);
+                    return;
                 }
 
                 //对当前的起点和终点进行插值
