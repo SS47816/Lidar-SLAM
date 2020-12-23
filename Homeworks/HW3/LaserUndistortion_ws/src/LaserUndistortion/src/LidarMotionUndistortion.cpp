@@ -148,7 +148,7 @@ public:
     {
         odom_pose.setIdentity();
 
-        tf::Stamped < tf::Pose > robot_pose;
+        tf::Stamped<tf::Pose> robot_pose;
         robot_pose.setIdentity();
         robot_pose.frame_id_ = "base_laser";
         robot_pose.stamp_ = dt;   //设置为ros::Time()表示返回最近的转换关系
@@ -204,22 +204,58 @@ public:
             int startIndex,
             int& beam_number)
     {
-       //TODO
-       for (int i = 0; i < beam_number; ++i)
-       {
-            // transform to base
-            auto range = ranges[startIndex+i];
-            auto theta = angles[startIndex+i];
-            double x = range*cos(theta);
-            double y = range*sin(theta);
+        //TODO
+        // Decompose the Pose to R and t
+        auto start_quat = frame_start_pose.getRotation();
+        auto start_tran = frame_start_pose.getOrigin();
+        auto end_quat = frame_end_pose.getRotation();
+        auto end_tran = frame_end_pose.getOrigin();
+
+        for (int i = 0; i < beam_number; ++i)
+        {
+            /** Step 1: 
+             * Determine the current Lidar Pose via linear interpolation
+             * and calculate its transform wrt the base_pose
+             */
             
-            // linear interpolation
-            auto frame_mid_pose = frame_start_pose.lerp(frame_end_pose, i/beam_number);
+            // Linear interpolation of R and t
+            auto mid_quat = start_quat.lerp(end_quat, tf::tfScalar(i/beam_number));
+            auto mid_tran = start_tran.lerp(end_tran, tf::tfScalar(i/beam_number));
             
-            // transform back
+            // Compose the current Pose
+            tf::Pose frame_mid_pose = tf::Pose(mid_quat, mid_tran);
+
+            // Construct the Transform from the current pose to base pose
+            auto T = frame_base_pose.inverseTimes(frame_mid_pose);
+            
+            /** Step 2: 
+             * Determine the current Laser point Pose in current frame
+             * and transform it to the base frame
+             */
+
+            // Construct the current Laser point pose
+            auto& range = ranges[startIndex+i];
+            auto& theta = angles[startIndex+i];
+            auto x = range*cos(theta);
+            auto y = range*sin(theta);
+            tf::Pose laser_point = tf::Pose(
+                tf::createQuaternionFromYaw(theta), 
+                tf::Vector3(tfScalar(x), tfScalar(y), tfScalar(0))
+            );
+
+            // Transform this laser points to base frame
+            tf::Pose laser_point_corrected = laser_point * T;
+
+            // correct the raw readings
+            //auto qu = laser_point_corrected.getRotation();
+            auto t = laser_point_corrected.getOrigin();
+            auto x_new = t.getX();
+            auto y_new = t.getY();
+            range = std::sqrt(std::pow(x_new,2) + std::pow(y_new,2));
+            theta = std::atan2(y_new, x_new);
 
         }
-       //end of TODO
+        //end of TODO
     }
 
 
