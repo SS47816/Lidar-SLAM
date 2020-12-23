@@ -2,6 +2,7 @@
 
 > by: SS47816
 
-## Homework 3: Odometry Calibration
+## Homework 3: Laser-scan Undistortion
 
-### Task 1: Linear Method
+### Task 1: Laser-scan Undistortion Code
+
