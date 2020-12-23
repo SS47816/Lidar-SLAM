@@ -206,10 +206,10 @@ public:
     {
         //TODO
         // Decompose the Pose to R and t
-        auto start_quat = frame_start_pose.getRotation();
-        auto start_tran = frame_start_pose.getOrigin();
-        auto end_quat = frame_end_pose.getRotation();
-        auto end_tran = frame_end_pose.getOrigin();
+        const auto start_quat = frame_start_pose.getRotation();
+        const auto start_tran = frame_start_pose.getOrigin();
+        const auto end_quat = frame_end_pose.getRotation();
+        const auto end_tran = frame_end_pose.getOrigin();
 
         for (int i = 0; i < beam_number; ++i)
         {
