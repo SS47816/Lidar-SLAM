@@ -244,7 +244,7 @@ public:
             );
 
             // Transform this laser points to base frame
-            tf::Pose laser_point_corrected = laser_point * T;
+            tf::Pose laser_point_corrected = T * laser_point;
 
             // Correct the raw readings
             const auto t = laser_point_corrected.getOrigin();
