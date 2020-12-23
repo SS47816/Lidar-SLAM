@@ -2,7 +2,6 @@
 
 > by: SS47816
 
-<<<<<<< HEAD
 ## Homework 3: Laser-scan Undistortion
 
 ### Task 1: Laser-scan Undistortion
@@ -32,8 +31,5 @@ $$
 ### Task 4: Lidar Point Undistortion using IMU
 
 1. 
-=======
-## Homework 3: Odometry Calibration
 
-### Task 1: Linear Method
->>>>>>> a9cda0eb277c7ef35a7dd2ed5c420e51b9fbf853
+
