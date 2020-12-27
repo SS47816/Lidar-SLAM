@@ -13,7 +13,7 @@ using namespace std;
 string scan_match_file = "./scan_match.txt";
 string odom_file = "./odom.txt";
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     // 放置激光雷达的时间和匹配值 t_s s_x s_y s_th
     vector<vector<double>> s_data;
@@ -29,7 +29,8 @@ int main(int argc, char** argv)
     }
 
     // 读取激光雷达的匹配值
-    while (!fin_s.eof()) {
+    while (!fin_s.eof())
+    {
         double s_t, s_x, s_y, s_th;
         fin_s >> s_t >> s_x >> s_y >> s_th;
         s_data.push_back(vector<double>({s_t, s_x, s_y, s_th}));
@@ -37,7 +38,8 @@ int main(int argc, char** argv)
     fin_s.close();
 
     // 读取两个轮子的角速度
-    while (!fin_r.eof()) {
+    while (!fin_r.eof())
+    {
         double t_r, w_L, w_R;
         fin_r >> t_r >> w_L >> w_R;
         r_data.push_back(vector<double>({t_r, w_L, w_R}));
@@ -149,10 +151,10 @@ int main(int argc, char** argv)
             last_rt = s_t;
             // 填充C, S矩阵
             //TODO: (4~5 lines)
-            C(2*id_s) = cx;
-            C(2*id_s+1) = cy;
-            S(2*id_s) = s_x;
-            S(2*id_s+1) = s_y;
+            C(2 * id_s) = cx;
+            C(2 * id_s + 1) = cy;
+            S(2 * id_s) = s_x;
+            S(2 * id_s + 1) = s_y;
 
             //end of TODO
             cx = 0;
@@ -167,8 +169,8 @@ int main(int argc, char** argv)
     double r_R;
     //TODO: (3~5 lines)
     b_wheel = C.householderQr().solve(S)(0);
-    r_L = -b_wheel*J21J22(0);
-    r_R = b_wheel*J21J22(1);
+    r_L = -b_wheel * J21J22(0);
+    r_R = b_wheel * J21J22(1);
 
     //end of TODO
     cout << "b: " << b_wheel << endl;
@@ -179,4 +181,3 @@ int main(int argc, char** argv)
 
     return 0;
 }
-

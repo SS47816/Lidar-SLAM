@@ -1,16 +1,14 @@
 #include "../include/calib_odom/Odom_Calib.hpp"
 
-
 //设置数据长度,即多少数据计算一次
 void OdomCalib::Set_data_len(int len)
 {
     data_len = len;
-    A.conservativeResize(len*3, 9);
-    b.conservativeResize(len*3);
+    A.conservativeResize(len * 3, 9);
+    b.conservativeResize(len * 3);
     A.setZero();
     b.setZero();
 }
-
 
 /*
 输入:里程计和激光数据
@@ -20,18 +18,18 @@ TODO:
 Ax = b
 
 */
-bool OdomCalib::Add_Data(Eigen::Vector3d Odom,Eigen::Vector3d scan)
+bool OdomCalib::Add_Data(Eigen::Vector3d Odom, Eigen::Vector3d scan)
 {
 
-    if(now_len < INT_MAX)
+    if (now_len < INT_MAX)
     {
         //TODO: 构建超定方程组
         Eigen::MatrixXd A_i(3, 9);
         A_i << Odom(0), Odom(1), Odom(2), 0, 0, 0, 0, 0, 0,
-               0, 0, 0, Odom(0), Odom(1), Odom(2), 0, 0, 0,
-               0, 0, 0, 0, 0, 0, Odom(0), Odom(1), Odom(2);
-        A.block(3*now_len, 0, 3, 9) = A_i;
-        b.segment(3*now_len, 3) = scan;
+            0, 0, 0, Odom(0), Odom(1), Odom(2), 0, 0, 0,
+            0, 0, 0, 0, 0, 0, Odom(0), Odom(1), Odom(2);
+        A.block(3 * now_len, 0, 3, 9) = A_i;
+        b.segment(3 * now_len, 3) = scan;
         std::cout << "No. of lens: " << now_len << " / " << data_len << std::endl;
         // std::cout << A.topRows(3*now_len) << std::endl;
         // std::cout << b.topRows(3*now_len) << std::endl;
@@ -57,7 +55,7 @@ Eigen::Matrix3d OdomCalib::Solve()
 
     //TODO: 求解线性最小二乘
     std::cout << "Solving... " << std::endl;
-    Eigen::VectorXd x = A.topRows(3*now_len).householderQr().solve(b.topRows(3*now_len));
+    Eigen::VectorXd x = A.topRows(3 * now_len).householderQr().solve(b.topRows(3 * now_len));
     std::cout << "Solved! " << std::endl;
     correct_matrix = Eigen::Matrix3d(x.data()).transpose();
     std::cout << x << std::endl;
@@ -72,7 +70,7 @@ Eigen::Matrix3d OdomCalib::Solve()
 */
 bool OdomCalib::is_full()
 {
-    if(now_len%data_len == 0 && now_len >= 1)
+    if (now_len % data_len == 0 && now_len >= 1)
     {
         now_len = data_len;
         return true;
