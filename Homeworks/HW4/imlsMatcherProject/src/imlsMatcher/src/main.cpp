@@ -22,10 +22,10 @@ class imlsDebug
 public:
     imlsDebug()
     {
-        m_imlsPathPub = m_node.advertise<nav_msgs::Path>("imls_path_pub_",1,true);
+        m_imlsPathPub = m_node.advertise<nav_msgs::Path>("imls_path_pub_", 1, true);
         m_imlsPath.header.stamp = ros::Time::now();
         m_imlsPath.header.frame_id = "odom";
-        m_odomPathPub = m_node.advertise<nav_msgs::Path>("odom_path_pub_",1,true);
+        m_odomPathPub = m_node.advertise<nav_msgs::Path>("odom_path_pub_", 1, true);
         m_odomPath.header.stamp = ros::Time::now();
         m_odomPath.header.frame_id = "odom";
 
@@ -39,54 +39,54 @@ public:
         topics.push_back(std::string("/odom"));
         rosbag::View view(bag, rosbag::TopicQuery(topics));
         //按顺序读取bag内激光的消息和里程计的消息
-        BOOST_FOREACH(rosbag::MessageInstance const m, view)
+        BOOST_FOREACH (rosbag::MessageInstance const m, view)
         {
             champion_nav_msgs::ChampionNavLaserScanConstPtr scan = m.instantiate<champion_nav_msgs::ChampionNavLaserScan>();
-            if(scan != NULL)
+            if (scan != NULL)
                 championLaserScanCallback(scan);
 
             nav_msgs::OdometryConstPtr odom = m.instantiate<nav_msgs::Odometry>();
-            if(odom != NULL)
+            if (odom != NULL)
                 odomCallback(odom);
 
             ros::spinOnce();
-            if(!ros::ok())
+            if (!ros::ok())
                 break;
         }
         // m_laserscanSub = m_nh.subscribe("sick_scan",5,&imlsDebug::championLaserScanCallback,this);
     }
 
     //将激光消息转换为激光坐标系下的二维点云
-    void ConvertChampionLaserScanToEigenPointCloud(const champion_nav_msgs::ChampionNavLaserScanConstPtr& msg,
-                                                   std::vector<Eigen::Vector2d>& eigen_pts)
+    void ConvertChampionLaserScanToEigenPointCloud(const champion_nav_msgs::ChampionNavLaserScanConstPtr &msg,
+                                                   std::vector<Eigen::Vector2d> &eigen_pts)
     {
         eigen_pts.clear();
-        for(int i = 0; i < msg->ranges.size(); ++i)
+        for (int i = 0; i < msg->ranges.size(); ++i)
         {
-            if(msg->ranges[i] < msg->range_min || msg->ranges[i] > msg->range_max)
+            if (msg->ranges[i] < msg->range_min || msg->ranges[i] > msg->range_max)
                 continue;
 
             double lx = msg->ranges[i] * std::cos(msg->angles[i]);
             double ly = msg->ranges[i] * std::sin(msg->angles[i]);
 
-            if(std::isnan(lx) || std::isinf(ly) ||
-               std::isnan(ly) || std::isinf(ly))
+            if (std::isnan(lx) || std::isinf(ly) ||
+                std::isnan(ly) || std::isinf(ly))
                 continue;
 
-            eigen_pts.push_back(Eigen::Vector2d(lx,ly));
+            eigen_pts.push_back(Eigen::Vector2d(lx, ly));
         }
     }
 
-    void championLaserScanCallback(const champion_nav_msgs::ChampionNavLaserScanConstPtr& msg)
+    void championLaserScanCallback(const champion_nav_msgs::ChampionNavLaserScanConstPtr &msg)
     {
-        if(m_isFirstFrame == true)
+        if (m_isFirstFrame == true)
         {
-            std::cout <<"First Frame"<<std::endl;
+            std::cout << "First Frame" << std::endl;
             m_isFirstFrame = false;
             m_prevLaserPose = Eigen::Vector3d(0, 0, 0);
             pubPath(m_prevLaserPose, m_imlsPath, m_imlsPathPub);
             ConvertChampionLaserScanToEigenPointCloud(msg, m_prevPointCloud);
-            return ;
+            return;
         }
 
         std::vector<Eigen::Vector2d> nowPts;
@@ -96,36 +96,36 @@ public:
         m_imlsMatcher.setSourcePointCloud(nowPts);
         m_imlsMatcher.setTargetPointCloud(m_prevPointCloud);
 
-        Eigen::Matrix3d rPose,rCovariance;
-        if(m_imlsMatcher.Match(rPose,rCovariance))
+        Eigen::Matrix3d rPose, rCovariance;
+        if (m_imlsMatcher.Match(rPose, rCovariance))
         {
-            std::cout <<"IMLS Match Successful:"<<rPose(0,2)<<","<<rPose(1,2)<<","<<atan2(rPose(1,0),rPose(0,0))*57.295<<std::endl;
+            std::cout << "IMLS Match Successful:" << rPose(0, 2) << "," << rPose(1, 2) << "," << atan2(rPose(1, 0), rPose(0, 0)) * 57.295 << std::endl;
             Eigen::Matrix3d lastPose;
             lastPose << cos(m_prevLaserPose(2)), -sin(m_prevLaserPose(2)), m_prevLaserPose(0),
-                        sin(m_prevLaserPose(2)),  cos(m_prevLaserPose(2)), m_prevLaserPose(1),
-                        0, 0, 1;
+                sin(m_prevLaserPose(2)), cos(m_prevLaserPose(2)), m_prevLaserPose(1),
+                0, 0, 1;
             Eigen::Matrix3d nowPose = lastPose * rPose;
-            m_prevLaserPose << nowPose(0, 2), nowPose(1, 2), atan2(nowPose(1,0), nowPose(0,0));
+            m_prevLaserPose << nowPose(0, 2), nowPose(1, 2), atan2(nowPose(1, 0), nowPose(0, 0));
             pubPath(m_prevLaserPose, m_imlsPath, m_imlsPathPub);
         }
         else
         {
-            std::cout <<"IMLS Match Failed!!!!"<<std::endl;
+            std::cout << "IMLS Match Failed!!!!" << std::endl;
         }
 
         m_prevPointCloud = nowPts;
     }
 
-    void odomCallback(const nav_msgs::OdometryConstPtr& msg)
+    void odomCallback(const nav_msgs::OdometryConstPtr &msg)
     {
-        if(m_isFirstFrame == true)
+        if (m_isFirstFrame == true)
             return;
 
         pubPath(msg, m_odomPath, m_odomPathPub);
     }
 
     //发布路径消息
-    void pubPath(Eigen::Vector3d& pose, nav_msgs::Path &path, ros::Publisher &mcu_path_pub_)
+    void pubPath(Eigen::Vector3d &pose, nav_msgs::Path &path, ros::Publisher &mcu_path_pub_)
     {
         ros::Time current_time = ros::Time::now();
         geometry_msgs::PoseStamped this_pose_stamped;
@@ -144,7 +144,7 @@ public:
         mcu_path_pub_.publish(path);
     }
 
-    void pubPath(const nav_msgs::OdometryConstPtr& msg, nav_msgs::Path &path, ros::Publisher &mcu_path_pub_)
+    void pubPath(const nav_msgs::OdometryConstPtr &msg, nav_msgs::Path &path, ros::Publisher &mcu_path_pub_)
     {
         ros::Time current_time = ros::Time::now();
         geometry_msgs::PoseStamped this_pose_stamped;
@@ -178,8 +178,7 @@ public:
     ros::Publisher m_odomPathPub;
 };
 
-
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     ros::init(argc, argv, "imls_debug");
 
@@ -189,4 +188,3 @@ int main(int argc, char** argv)
 
     return (0);
 }
-
