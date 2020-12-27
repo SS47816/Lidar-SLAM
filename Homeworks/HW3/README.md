@@ -90,7 +90,6 @@ $$
    X = VU^T
    $$
    
-
 5. Determinant of X:
    $$
    \widehat R = \left\{%
@@ -100,16 +99,74 @@ $$
    \end{array}\right.
    $$
    
+6. Expanding equation (9):
+   $$
+   \begin{align*}
+   {\sum}^2 &= \sum^N_{i=1}(q\prime_i - Rq_i)^T(q\prime_i - Rq_i) \\
+   &= \sum^N_{i=1}(q\prime_i^T q\prime_i + q_i^T R^T Rq_i - q\prime_i^T Rq_i - q_i^T R^T q\prime_i) \\
+   &= \sum^N_{i=1}(q\prime_i^T q\prime_i + q_i^T q_i - 2q\prime_i^T Rq_i)
+   \end{align*}
+   $$
 
-6. sdf
+7. Therefore, minimising $\sum^2$ is equivalent to maximising:
+   $$
+   \begin{align*}
+   F &= \sum^N_{i=1} q\prime_i^T Rq_i \\
+   &= Trace\Big(\sum^N_{i=1}Rq_iq\prime_i^T \Big) \\
+   &= Trace(RH)
+   \end{align*}
+   $$
+   
 
-7. sdf
+8. _Lemma:_ for any positive definite matrix $AA^T$ , and any orthonormal matrix $B$:
+   $$
+   Trace(AA^T) \geq Trace(BAA^T)
+   $$
+   _Proof of Lemma:_ Let $a_i$ be the $i$th column of matrix A, then:
+   $$
+   \begin{align*}
+   Trace(BAA^T) &= Trace(A^TBA) \\
+   &= \sum_i a^T_i(Ba_i)
+   \end{align*}
+   $$
+   By Suchwarz inequality, 
+   $$
+   a^T_i(Ba_i) \le \sqrt{(a^T_ia_i)(a^T_iB^TBa_i)} = a^T_ia_i
+   $$
+   Hence,
+   $$
+   Trace(AA^T) \geq Trace(BAA^T)
+   $$
+
+9. From (12) and (13), we have:
+   $$
+   \begin{align*}
+   XH &= VU^TU\Lambda V^T \\
+   &= V\Lambda V^T
+   \end{align*}
+   $$
+   which is a symmetrical and positive definate matrix.
+
+10. Therefore, for any $3\times3$ orthonomal matrix $B$,
+    $$
+    Trace(XH^T) \geq Trace(BXH^T)
+    $$
+    Thus, among all $3\times3$ orthonomal matrices, $X$ maximise $F$. When $det(X) = +1$, $X$ is a rotation matrix. 
+
+11. Hence, the solution is:
+    $$
+    \begin{align*}
+    R &= X = VU^T \\
+    T &= p - Rp\prime
+    \end{align*}
+    $$
+    
 
 ---
 
 ### Task 3: Principles about Lidar
 
-
+1. 
 
 ---
 
