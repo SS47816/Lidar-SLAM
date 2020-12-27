@@ -6,10 +6,10 @@
                 "${workspaceFolder}/**",
                 "/usr/include/eigen3/**",
                 "/usr/include/pcl-1.8/**",
+                "/usr/include/vtk-6.3/**",
                 "/opt/ros/**",
                 "/etc/ros/**",
-                "~/lib/**",
-                "/usr/include/vtk-6.3"
+                "~/lib/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
