@@ -77,15 +77,33 @@ $$
 
 2. Construct a $3\times3$ matrix H:
    $$
-   p\prime \triangleq {1 \over N}\sum^N_{i=i}p\prime_i
+   H \triangleq \sum^N_{i=i}q_iq\prime^T_i
+   $$
+   
+3. SVD of H:
+   $$
+   H = U\Lambda V^T
+   $$
+
+4. Construct X:
+   $$
+   X = VU^T
    $$
    
 
-$$
-{\sum}^2 = \sum^N_{i=1} || p\prime_i - (Rp_i + T) || \\
-$$
+5. Determinant of X:
+   $$
+   \widehat R = \left\{%
+   \begin{array}{lc@{\kern2pt}c@{\kern2pt}r}
+   X & det(X) & = & +1 \\
+   \textrm{fail} & det(X) & = & -1
+   \end{array}\right.
+   $$
+   
 
+6. sdf
 
+7. sdf
 
 ---
 
