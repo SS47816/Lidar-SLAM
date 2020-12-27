@@ -4,9 +4,12 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/usr/include/eigen3",
+                "/usr/include/eigen3/**",
+                "/usr/include/pcl-1.8/**",
                 "/opt/ros/**",
-                "/etc/ros/**"
+                "/etc/ros/**",
+                "~/lib/**",
+                "/usr/include/vtk-6.3"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
