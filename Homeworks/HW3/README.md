@@ -166,12 +166,27 @@ $$
 
 ### Task 3: Principles about Lidar
 
-1. 
+1. Lidars measures distance by measureing the ToF (Time of Flight) of each laser beam it emitted. 
+
+   Distance = The travel time (measured through the phase difference of the emitted and the recieved beam) of beam $\times$ the speed of light $/$ 2.
+
+2. The image represents the 4 typical patterns on the distribution of measured range from the recieved laser beams. 
+
+   <span style='color:MediumSpringGreen'>Green Line: </span> Exponential distribution, more beams tend to be reflected by objects that are closer to the Lidar
+
+   <span style='color:DeepSkyBlue'> Blue Line: </span> Gaussian distribution, the beams reflected by various objects naturally distributed in the scene
+
+   <span style='color:Crimson'>Red Line: </span> Uniform distribution, the beams reflected by various objects that ranging uniformly in the scene
+
+   <span style='color:pink'>Red Line: </span> Uniform distribution, the beams reached/exceeded the max range
+
+   
 
 ---
 
 ### Task 4: Lidar Point Undistortion using IMU
 
-1. 
+1. By using IMU alone, the accuarcy and reliability of the IMU will become the primary source affecting the performance of the undistrotion, especially when in a magnetically noisy environment. And the accuarcy will suffer from the inaccuracy in IMU drift.
+2. When applying undistrotion on pointcloud with only an IMU, the high frequency IMU reading could be used to estimate the linear and angular velocity (which tends to be more accuarte than the odom reading), and uses these estimated motion parameters to initialise a VICP algorithm, to iteratively optimise the motion estimation and the pointcloud undistorion. 
 
 
