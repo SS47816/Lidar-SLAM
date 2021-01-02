@@ -203,10 +203,13 @@ bool IMLSICPMatcher::ImplicitMLSFunction(Eigen::Vector2d x,
 
     //TODO
     //根据函数进行投影．计算height，即ppt中的I(x)
+    
+    // Iterate over all K nearest points
     for (int i = 0; i < nearPoints.size(); i++)
     {
-        const Eigen::Vector2d &p = m_targetPointCloud[i];
-        const Eigen::Vector2d &n = m_targetPtCloudNormals[i];
+        // Retrive the point and its normal vector
+        const Eigen::Vector2d &p = nearPoints[i];
+        const Eigen::Vector2d &n = nearNormals[i];
 
         const double abs2 = (x - p).squaredNorm();
         const double proj = (x - p).dot(n);
@@ -297,6 +300,7 @@ void IMLSICPMatcher::projSourcePtToSurface(
         Eigen::Vector2d yi;
         //TODO
         //计算yi．
+
 
         //end of TODO
         out_cloud.push_back(yi);
