@@ -211,14 +211,17 @@ bool IMLSICPMatcher::ImplicitMLSFunction(Eigen::Vector2d x,
         const Eigen::Vector2d &p = nearPoints[i];
         const Eigen::Vector2d &n = nearNormals[i];
 
+        // Calculate intermediate terms
         const double abs2 = (x - p).squaredNorm();
         const double proj = (x - p).dot(n);
         const double w = std::exp(-abs2/std::pow(m_h, 2));
         
+        // Sum up
         projSum += w*proj;
         weightSum += w;
     }
 
+    // Calculate the height I(x)
     height = projSum/weightSum;
 
     //end of TODO
