@@ -153,7 +153,7 @@ bool IMLSICPMatcher::ImplicitMLSFunction(Eigen::Vector2d x,
     m_pTargetKDTree->knn(x, nearIndices, nearDist2, searchNumber, 0,
                          Nabo::NNSearchD::SORT_RESULTS | Nabo::NNSearchD::ALLOW_SELF_MATCH |
                              Nabo::NNSearchD::TOUCH_STATISTICS,
-                         m_h);
+                         m_r);
 
     std::vector<Eigen::Vector2d> nearPoints;
     std::vector<Eigen::Vector2d> nearNormals;
@@ -203,6 +203,20 @@ bool IMLSICPMatcher::ImplicitMLSFunction(Eigen::Vector2d x,
 
     //TODO
     //根据函数进行投影．计算height，即ppt中的I(x)
+    for (int i = 0; i < nearPoints.size(); i++)
+    {
+        const Eigen::Vector2d &p = m_targetPointCloud[i];
+        const Eigen::Vector2d &n = m_targetPtCloudNormals[i];
+
+        const double abs2 = (x - p).squaredNorm();
+        const double proj = (x - p).dot(n);
+        const double w = std::exp(-abs2/std::pow(m_h, 2));
+        
+        projSum += w*proj;
+        weightSum += w;
+    }
+
+    height = projSum/weightSum;
 
     //end of TODO
 
@@ -431,12 +445,12 @@ Eigen::Vector2d IMLSICPMatcher::ComputeNormal(std::vector<Eigen::Vector2d> &near
 
     //TODO
     //根据周围的激光点计算法向量，参考ppt中NICP计算法向量的方法
-    
+
     // Calculate the mean of all nearPoints
     const Eigen::Vector2d mu_ = std::accumulate(nearPoints.begin(), nearPoints.end(), Eigen::Vector2d(0, 0)) / nearPoints.size();
 
     // Construct the matrix for all the normalized points
-    std::for_each(nearPoints.begin(), nearPoints.end(), [mu_](Eigen::Vector2d vec){vec -= mu;});
+    std::for_each(nearPoints.begin(), nearPoints.end(), [mu_](Eigen::Vector2d vec) { vec -= mu; });
     Eigen::MatrixXd M(nearPoints.size(), 2);
     for (int i = 0; i < nearPoints.size(); ++i)
     {
@@ -444,11 +458,12 @@ Eigen::Vector2d IMLSICPMatcher::ComputeNormal(std::vector<Eigen::Vector2d> &near
     }
 
     // Compute the Eigen values of the points
-    const Eigen::Matrix2d S = M.transpose()*M;
+    const Eigen::Matrix2d S = M.transpose() * M;
     Eigen::EigenSolver<Eigen::MatrixXd> es(S);
     const Eigen::Vector2d evalues = es.eigenvalues();
     const Eigen::MatrixXd evectors = es.eigenvectors();
-    normal = evalues[0] < evalues[1]? evectors.row(0) : evectors.row(1);
+    normal = evalues[0] < evalues[1] ? evectors.row(0) : evectors.row(1);
+    normal = normal.normalized();
     //end of TODO
 
     return normal;

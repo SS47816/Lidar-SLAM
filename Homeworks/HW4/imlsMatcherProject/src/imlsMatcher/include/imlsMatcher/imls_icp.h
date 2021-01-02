@@ -7,6 +7,7 @@
 #include <nabo/nabo.h>
 #include <numeric>
 #include <algorithm>
+#include <cmath>
 
 //#include <opencv2/opencv.hpp>
 
