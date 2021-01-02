@@ -447,10 +447,10 @@ Eigen::Vector2d IMLSICPMatcher::ComputeNormal(std::vector<Eigen::Vector2d> &near
     //根据周围的激光点计算法向量，参考ppt中NICP计算法向量的方法
 
     // Calculate the mean of all nearPoints
-    const Eigen::Vector2d mu_ = std::accumulate(nearPoints.begin(), nearPoints.end(), Eigen::Vector2d(0, 0)) / nearPoints.size();
+    const Eigen::Vector2d mu = std::accumulate(nearPoints.begin(), nearPoints.end(), Eigen::Vector2d(0, 0)) / nearPoints.size();
 
     // Construct the matrix for all the normalized points
-    std::for_each(nearPoints.begin(), nearPoints.end(), [mu_](Eigen::Vector2d vec) { vec -= mu; });
+    std::for_each(nearPoints.begin(), nearPoints.end(), [mu](Eigen::Vector2d vec) { vec -= mu; });
     Eigen::MatrixXd M(nearPoints.size(), 2);
     for (int i = 0; i < nearPoints.size(); ++i)
     {
