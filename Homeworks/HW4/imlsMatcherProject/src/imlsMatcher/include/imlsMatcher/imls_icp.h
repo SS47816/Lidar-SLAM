@@ -5,6 +5,8 @@
 #include <vector>
 #include <set>
 #include <nabo/nabo.h>
+#include <numeric>
+#include <algorithm>
 
 //#include <opencv2/opencv.hpp>
 

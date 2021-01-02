@@ -152,7 +152,7 @@ bool IMLSICPMatcher::ImplicitMLSFunction(Eigen::Vector2d x,
     //最大搜索距离为m_r
     m_pTargetKDTree->knn(x, nearIndices, nearDist2, searchNumber, 0,
                          Nabo::NNSearchD::SORT_RESULTS | Nabo::NNSearchD::ALLOW_SELF_MATCH |
-                         Nabo::NNSearchD::TOUCH_STATISTICS,
+                             Nabo::NNSearchD::TOUCH_STATISTICS,
                          m_h);
 
     std::vector<Eigen::Vector2d> nearPoints;
@@ -431,6 +431,16 @@ Eigen::Vector2d IMLSICPMatcher::ComputeNormal(std::vector<Eigen::Vector2d> &near
 
     //TODO
     //根据周围的激光点计算法向量，参考ppt中NICP计算法向量的方法
+    const Eigen::Vector2d mu_ = std::accumulate(nearPoints.begin(), nearPoints.end(), Eigen::Vector2d(0, 0)) / nearPoints.size();
+
+    std::for_each(nearPoints.begin(), nearPoints.end(), [mu_](Eigen::Vector2d vec){vec -= mu;});
+    Eigen::MatrixXd M(nearPoints.size(), 2);
+    for (int i = 0; i < nearPoints.size(); ++i)
+    {
+        M.row(i) = nearPoints[i];
+    }
+
+    const Eigen::Matrix2d Sum = M.transpose()*M;
 
     //end of TODO
 
