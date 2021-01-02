@@ -463,7 +463,8 @@ Eigen::Vector2d IMLSICPMatcher::ComputeNormal(std::vector<Eigen::Vector2d> &near
     const Eigen::Vector2d evalues = es.eigenvalues();
     const Eigen::MatrixXd evectors = es.eigenvectors();
     normal = evalues[0] < evalues[1] ? evectors.row(0) : evectors.row(1);
-    normal = normal.normalized();
+    normal.stableNormalize();
+
     //end of TODO
 
     return normal;
