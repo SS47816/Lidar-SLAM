@@ -303,7 +303,7 @@ void IMLSICPMatcher::projSourcePtToSurface(
         Eigen::Vector2d yi;
         //TODO
         //计算yi．
-
+        yi = nearXi - height*nearNormal;
 
         //end of TODO
         out_cloud.push_back(yi);
