@@ -18,7 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(Boost REQUIRED COMPONENTS system thread graph)
-find_package(PCL 1.7 REQUIRED)
+find_package(PCL 1.8 REQUIRED)
 
 find_package(libnabo REQUIRED PATHS ${LIBNABO_INSTALL_DIR} )
 include_directories(${libnabo_INCLUDE_DIRS})
@@ -27,7 +27,7 @@ find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 set(EIGEN3_INCLUDE_DIR /usr/include/eigen3/)
-set(PCL_INCLUDE_DIR /usr/include/pcl-1.7)
+set(PCL_INCLUDE_DIR /usr/include/pcl-1.8)
 
 set(EXTERNAL_LIBS "")
 
@@ -72,7 +72,7 @@ include_directories(
   ${EIGEN3_INCLUDE_DIR}
   ${PCL_INCLUDE_DIR}
   ${CSM_INCLUDE_DIR}
-  /opt/ros/kinetic/include/csm
+  /opt/ros/melodic/include/csm
 )
 
 
@@ -85,7 +85,7 @@ add_executable(imlsMatcher_node  src/main.cpp src/imls_icp.cpp)
 target_link_libraries(imlsMatcher_node
    ${catkin_LIBRARIES}
    ${EXTERNAL_LIBS}
-   /opt/ros/kinetic/lib/libcsm.so
+   /opt/ros/melodic/lib/libcsm.so
 )
 
 #############
