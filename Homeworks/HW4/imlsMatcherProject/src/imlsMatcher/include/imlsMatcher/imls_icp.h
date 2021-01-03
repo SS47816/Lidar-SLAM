@@ -16,9 +16,9 @@
 #include <eigen3/Eigen/Eigenvalues>
 #include <eigen3/unsupported/Eigen/Polynomials>
 
-#include <pcl/visualization/cloud_viewer.h>
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
+#include <pcl-1.8/pcl/visualization/cloud_viewer.h>
+#include <pcl-1.8/pcl/point_cloud.h>
+#include <pcl-1.8/pcl/point_types.h>
 
 // #include <pcl-1.7/pcl/visualization/cloud_viewer.h>
 // #include <pcl-1.7/pcl/point_cloud.h>
