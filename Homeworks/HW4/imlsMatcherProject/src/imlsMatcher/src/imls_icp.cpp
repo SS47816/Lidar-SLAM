@@ -468,8 +468,8 @@ Eigen::Vector2d IMLSICPMatcher::ComputeNormal(std::vector<Eigen::Vector2d> &near
     const Eigen::Matrix2d S = M.transpose() * M;
     Eigen::EigenSolver<Eigen::MatrixXd> es(S);
     const Eigen::Vector2d evalues = es.eigenvalues().real();
-    const std::vector<Eigen::Vector2d> evectors{es.eigenvectors().col(0).real(), es.eigenvectors().col(1).real()};
-    normal = evalues[0] < evalues[1] ? evectors[0] : evectors[1];
+    const std::pair<Eigen::Vector2d, Eigen::Vector2d> evectors{es.eigenvectors().col(0).real(), es.eigenvectors().col(1).real()};
+    normal = evalues[0] < evalues[1] ? evectors.first : evectors.second;
     normal.stableNormalize();
 
     //end of TODO
