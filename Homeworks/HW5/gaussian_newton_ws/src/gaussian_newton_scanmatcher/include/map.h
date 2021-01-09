@@ -31,98 +31,89 @@
 #include <stdint.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-// Forward declarations
-struct _rtk_fig_t;
-
+  // Forward declarations
+  struct _rtk_fig_t;
 
 // Limits
 #define MAP_WIFI_MAX_LEVELS 8
-#define CELL_STATUS_FREE    (-1)
+#define CELL_STATUS_FREE (-1)
 #define CELL_STATUS_UNKNOWN (0)
-#define CELL_STATUS_OCC     (+1)
+#define CELL_STATUS_OCC (+1)
 
-
-// Description for a single map cell.
-/**
+  // Description for a single map cell.
+  /**
  *单独的地图cell类型
  */
-typedef struct
-{
-  // Occupancy state (-1 = free, 0 = unknown, +1 = occ)
-  int occ_state;
+  typedef struct
+  {
+    // Occupancy state (-1 = free, 0 = unknown, +1 = occ)
+    int occ_state;
 
-  // Distance to the nearest occupied cell
-  double occ_dist;
+    // Distance to the nearest occupied cell
+    double occ_dist;
 
-  double score;
+    double score;
 
-  // Wifi levels
-  //int wifi_levels[MAP_WIFI_MAX_LEVELS];
+    // Wifi levels
+    //int wifi_levels[MAP_WIFI_MAX_LEVELS];
 
-} map_cell_t;
+  } map_cell_t;
 
-
-// Description for a map
-/**
+  // Description for a map
+  /**
  *地图的数据结构
  */
-typedef struct
-{
-  // Map origin; the map is a viewport onto a conceptual larger map.
-  double origin_x, origin_y;
+  typedef struct
+  {
+    // Map origin; the map is a viewport onto a conceptual larger map.
+    double origin_x, origin_y;
 
-  // Map scale (m/cell) 地图的分辨率
-  double resolution;
+    // Map scale (m/cell) 地图的分辨率
+    double resolution;
 
-  // Map dimensions (number of cells) X Y方向的栅格束
-  int size_x, size_y;
+    // Map dimensions (number of cells) X Y方向的栅格束
+    int size_x, size_y;
 
-  // The map data, stored as a grid
-  map_cell_t *cells;
+    // The map data, stored as a grid
+    map_cell_t *cells;
 
-  // Max distance at which we care about obstacles, for constructing
-  // likelihood field
-  double max_occ_dist; //在似然场模型中，障碍物影响的最大距离
+    // Max distance at which we care about obstacles, for constructing
+    // likelihood field
+    double max_occ_dist; //在似然场模型中，障碍物影响的最大距离
 
-  double min_score;
+    double min_score;
 
+    double likelihood_sigma; //似然场的标准差
 
-  double likelihood_sigma; //似然场的标准差
+  } map_t;
 
-} map_t;
-
-
-
-
-/**************************************************************************
+  /**************************************************************************
  * Basic map functions
  **************************************************************************/
 
-// Create a new (empty) map 创建一个空地图
-map_t *map_alloc(void);
+  // Create a new (empty) map 创建一个空地图
+  map_t *map_alloc(void);
 
-// Destroy a map    释放地图的内存
-void map_free(map_t *map);
+  // Destroy a map    释放地图的内存
+  void map_free(map_t *map);
 
-// Get the cell at the given point 返回某一个地图栅格
-map_cell_t *map_get_cell(map_t *map, double ox, double oy, double oa);
+  // Get the cell at the given point 返回某一个地图栅格
+  map_cell_t *map_get_cell(map_t *map, double ox, double oy, double oa);
 
-// Update the cspace distances 更新地图的似然场模型中的最大影响距离
-void map_update_cspace(map_t *map, double max_occ_dist);
-
-
-
+  // Update the cspace distances 更新地图的似然场模型中的最大影响距离
+  void map_update_cspace(map_t *map, double max_occ_dist);
 
 /**************************************************************************
  * Map manipulation macros
  **************************************************************************/
 
 // Convert from map index to world coords  地图坐标转换到世界坐标
-#define MAP_WXGX(map, i) (map->origin_x + ((i) - map->size_x / 2) * map->resolution)
-#define MAP_WYGY(map, j) (map->origin_y + ((j) - map->size_y / 2) * map->resolution)
+#define MAP_WXGX(map, i) (map->origin_x + ((i)-map->size_x / 2) * map->resolution)
+#define MAP_WYGY(map, j) (map->origin_y + ((j)-map->size_y / 2) * map->resolution)
 
 // Convert from world coords to map coords 世界坐标转换到地图坐标
 #define MAP_GXWX(map, x) (floor((x - map->origin_x) / map->resolution + 0.5) + map->size_x / 2)
@@ -135,7 +126,7 @@ void map_update_cspace(map_t *map, double max_occ_dist);
 #define MAP_VALID(map, i, j) ((i >= 0) && (i < map->size_x) && (j >= 0) && (j < map->size_y))
 
 // Compute the cell index for the given map coords. 把地图坐标转化为Index
-#define MAP_INDEX(map, i, j) ((i) + (j) * map->size_x)
+#define MAP_INDEX(map, i, j) ((i) + (j)*map->size_x)
 
 #ifdef __cplusplus
 }

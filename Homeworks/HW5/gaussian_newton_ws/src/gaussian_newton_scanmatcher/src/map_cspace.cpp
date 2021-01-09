@@ -28,10 +28,10 @@
 
 class CellData
 {
-  public:
-    map_t* map_;
-    unsigned int i_, j_;
-    unsigned int src_i_, src_j_;
+public:
+  map_t *map_;
+  unsigned int i_, j_;
+  unsigned int src_i_, src_j_;
 };
 
 /*
@@ -42,52 +42,50 @@ class CellData
 */
 class CachedDistanceMap
 {
-  public:
-    CachedDistanceMap(double scale, double max_dist) :
-      distances_(NULL), scale_(scale), max_dist_(max_dist)
-    {
-      //最大距离对应的cell的个数
-      cell_radius_ = max_dist / scale;
+public:
+  CachedDistanceMap(double scale, double max_dist) : distances_(NULL), scale_(scale), max_dist_(max_dist)
+  {
+    //最大距离对应的cell的个数
+    cell_radius_ = max_dist / scale;
 
-      distances_ = new double *[cell_radius_+2];
-      for(int i=0; i<=cell_radius_+1; i++)
+    distances_ = new double *[cell_radius_ + 2];
+    for (int i = 0; i <= cell_radius_ + 1; i++)
+    {
+      distances_[i] = new double[cell_radius_ + 2];
+      for (int j = 0; j <= cell_radius_ + 1; j++)
       {
-        distances_[i] = new double[cell_radius_+2];
-        for(int j=0; j<=cell_radius_+1; j++)
-        {
-            distances_[i][j] = sqrt(i*i + j*j);
-        }
+        distances_[i][j] = sqrt(i * i + j * j);
       }
     }
+  }
 
-    ~CachedDistanceMap()
+  ~CachedDistanceMap()
+  {
+    if (distances_)
     {
-      if(distances_)
-      {
-        for(int i=0; i<=cell_radius_+1; i++)
-            delete[] distances_[i];
-        delete[] distances_;
-      }
+      for (int i = 0; i <= cell_radius_ + 1; i++)
+        delete[] distances_[i];
+      delete[] distances_;
     }
-    double** distances_;
-    double scale_;
-    double max_dist_;
-    int cell_radius_;
+  }
+  double **distances_;
+  double scale_;
+  double max_dist_;
+  int cell_radius_;
 };
 
-
-bool operator<(const CellData& a, const CellData& b)
+bool operator<(const CellData &a, const CellData &b)
 {
   return a.map_->cells[MAP_INDEX(a.map_, a.i_, a.j_)].occ_dist > a.map_->cells[MAP_INDEX(b.map_, b.i_, b.j_)].occ_dist;
 }
 
-CachedDistanceMap* get_distance_map(double scale, double max_dist)
+CachedDistanceMap *get_distance_map(double scale, double max_dist)
 {
-  static CachedDistanceMap* cdm = NULL;
+  static CachedDistanceMap *cdm = NULL;
 
-  if(!cdm || (cdm->scale_ != scale) || (cdm->max_dist_ != max_dist))
+  if (!cdm || (cdm->scale_ != scale) || (cdm->max_dist_ != max_dist))
   {
-    if(cdm)
+    if (cdm)
       delete cdm;
     cdm = new CachedDistanceMap(scale, max_dist);
   }
@@ -107,14 +105,14 @@ CachedDistanceMap* get_distance_map(double scale, double max_dist)
  * @param cdm
  * @param marked
  */
-void enqueue(map_t* map, unsigned int i, unsigned int j,
-	     unsigned int src_i, unsigned int src_j,
-	     std::priority_queue<CellData>& Q,
-	     CachedDistanceMap* cdm,
-	     unsigned char* marked)
+void enqueue(map_t *map, unsigned int i, unsigned int j,
+             unsigned int src_i, unsigned int src_j,
+             std::priority_queue<CellData> &Q,
+             CachedDistanceMap *cdm,
+             unsigned char *marked)
 {
   //如果已经被计算过了 则直接返回
-  if(marked[MAP_INDEX(map, i, j)])
+  if (marked[MAP_INDEX(map, i, j)])
     return;
 
   //这里的距离是栅格的距离
@@ -122,14 +120,14 @@ void enqueue(map_t* map, unsigned int i, unsigned int j,
   unsigned int dj = abs(j - src_j);
   double distance = cdm->distances_[di][dj];
 
-  if(distance > cdm->cell_radius_)
+  if (distance > cdm->cell_radius_)
     return;
 
   //转换为实际距离
   map->cells[MAP_INDEX(map, i, j)].occ_dist = distance * map->resolution;
 
-  double z = map->cells[MAP_INDEX(map,i,j)].occ_dist;
-  map->cells[MAP_INDEX(map, i, j)].score = exp(-(z * z) /  (2 * map->likelihood_sigma * map->likelihood_sigma));
+  double z = map->cells[MAP_INDEX(map, i, j)].occ_dist;
+  map->cells[MAP_INDEX(map, i, j)].score = exp(-(z * z) / (2 * map->likelihood_sigma * map->likelihood_sigma));
 
   CellData cell;
   cell.map_ = map;
@@ -143,7 +141,6 @@ void enqueue(map_t* map, unsigned int i, unsigned int j,
   marked[MAP_INDEX(map, i, j)] = 1;
 }
 
-
 // Update the cspace distance values
 
 /**
@@ -155,16 +152,16 @@ void enqueue(map_t* map, unsigned int i, unsigned int j,
  */
 void map_update_cspace(map_t *map, double max_occ_dist)
 {
-  unsigned char* marked;
+  unsigned char *marked;
   std::priority_queue<CellData> Q;
 
-  marked = new unsigned char[map->size_x*map->size_y];
-  memset(marked, 0, sizeof(unsigned char) * map->size_x*map->size_y);
+  marked = new unsigned char[map->size_x * map->size_y];
+  memset(marked, 0, sizeof(unsigned char) * map->size_x * map->size_y);
 
   map->max_occ_dist = max_occ_dist;
 
   //得到一个CachedDistanceMap
-  CachedDistanceMap* cdm = get_distance_map(map->resolution, map->max_occ_dist);
+  CachedDistanceMap *cdm = get_distance_map(map->resolution, map->max_occ_dist);
 
   //这个sigma已经在外面设置过了 在handmapmsg里面就会设置
   map->min_score = exp(-max_occ_dist * max_occ_dist / (2 * map->likelihood_sigma * map->likelihood_sigma));
@@ -176,49 +173,49 @@ void map_update_cspace(map_t *map, double max_occ_dist)
 
   //计算出来所有的边界障碍物 只有边界障碍物才用来进行匹配 其他的障碍物都当成no-information
 
-    /*所有障碍物的栅格  离障碍物的距离都标志为0  非障碍物的栅格都标记为max_occ_dist*/
-    for(int i=0; i<map->size_x; i++)
+  /*所有障碍物的栅格  离障碍物的距离都标志为0  非障碍物的栅格都标记为max_occ_dist*/
+  for (int i = 0; i < map->size_x; i++)
+  {
+    cell.src_i_ = cell.i_ = i;
+    for (int j = 0; j < map->size_y; j++)
     {
-        cell.src_i_ = cell.i_ = i;
-        for(int j=0; j<map->size_y; j++)
-        {
-            if(map->cells[MAP_INDEX(map, i, j)].occ_state == CELL_STATUS_OCC)
-            {
-                map->cells[MAP_INDEX(map, i, j)].occ_dist = 0.0;
-                map->cells[MAP_INDEX(map,i,j)].score = 1.0;
-                cell.src_j_ = cell.j_ = j;
-                marked[MAP_INDEX(map, i, j)] = 1;
-                Q.push(cell);
-            }
-            else
-                map->cells[MAP_INDEX(map, i, j)].occ_dist = max_occ_dist;
-        }
+      if (map->cells[MAP_INDEX(map, i, j)].occ_state == CELL_STATUS_OCC)
+      {
+        map->cells[MAP_INDEX(map, i, j)].occ_dist = 0.0;
+        map->cells[MAP_INDEX(map, i, j)].score = 1.0;
+        cell.src_j_ = cell.j_ = j;
+        marked[MAP_INDEX(map, i, j)] = 1;
+        Q.push(cell);
+      }
+      else
+        map->cells[MAP_INDEX(map, i, j)].occ_dist = max_occ_dist;
     }
+  }
 
-  while(!Q.empty())
+  while (!Q.empty())
   {
     CellData current_cell = Q.top();
 
     /*往上、下、左、右四个方向拓展*/
-    if(current_cell.i_ > 0)
-      enqueue(map, current_cell.i_-1, current_cell.j_,
-	      current_cell.src_i_, current_cell.src_j_,
-	      Q, cdm, marked);
+    if (current_cell.i_ > 0)
+      enqueue(map, current_cell.i_ - 1, current_cell.j_,
+              current_cell.src_i_, current_cell.src_j_,
+              Q, cdm, marked);
 
-    if(current_cell.j_ > 0)
-      enqueue(map, current_cell.i_, current_cell.j_-1,
-	      current_cell.src_i_, current_cell.src_j_,
-	      Q, cdm, marked);
+    if (current_cell.j_ > 0)
+      enqueue(map, current_cell.i_, current_cell.j_ - 1,
+              current_cell.src_i_, current_cell.src_j_,
+              Q, cdm, marked);
 
-    if((int)current_cell.i_ < map->size_x - 1)
-      enqueue(map, current_cell.i_+1, current_cell.j_,
-	      current_cell.src_i_, current_cell.src_j_,
-	      Q, cdm, marked);
+    if ((int)current_cell.i_ < map->size_x - 1)
+      enqueue(map, current_cell.i_ + 1, current_cell.j_,
+              current_cell.src_i_, current_cell.src_j_,
+              Q, cdm, marked);
 
-    if((int)current_cell.j_ < map->size_y - 1)
-      enqueue(map, current_cell.i_, current_cell.j_+1,
-	      current_cell.src_i_, current_cell.src_j_,
-	      Q, cdm, marked);
+    if ((int)current_cell.j_ < map->size_y - 1)
+      enqueue(map, current_cell.i_, current_cell.j_ + 1,
+              current_cell.src_i_, current_cell.src_j_,
+              Q, cdm, marked);
 
     Q.pop();
   }
