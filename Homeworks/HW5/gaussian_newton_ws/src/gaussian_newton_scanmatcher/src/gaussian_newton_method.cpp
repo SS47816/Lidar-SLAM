@@ -76,7 +76,7 @@ map_t *CreateMapFromLaserPoints(Eigen::Vector3d map_origin_pt,
  * @brief InterpMapValueWithDerivatives
  * 在地图上的进行插值，得到coords处的势场值和对应的关于位置的梯度．
  * 返回值为Eigen::Vector3d ans
- * ans(0)表示市场值
+ * ans(0)表示势场值
  * ans(1:2)表示梯度
  * @param map
  * @param coords
@@ -86,6 +86,25 @@ Eigen::Vector3d InterpMapValueWithDerivatives(map_t *map, Eigen::Vector2d &coord
 {
     Eigen::Vector3d ans;
     //TODO
+
+    // Get the x y coordinates for the point
+    const int i = MAP_GXWX(map, coords(0));
+    const int j = MAP_GYWY(map, coords(1));
+
+    // Find the corner 4 points surounding it
+    if (MAP_VALID(map, i, j))
+    {
+        std::vector<int> corner_scores = std::vector<int>(4, 0);
+        corner_scores[0] = map->cells[MAP_INDEX(map, i, j+1)].occ_state;
+        corner_scores[1] = map->cells[MAP_INDEX(map, i+1, j+1)].occ_state;
+        corner_scores[2] = map->cells[MAP_INDEX(map, i+1, j)].occ_state;
+        corner_scores[3] = map->cells[MAP_INDEX(map, i, j)].occ_state;
+
+        const double x = MAP_GXWX_DOUBLE(map, coords(0));
+        const double y = MAP_GYWY_DOUBLE(map, coords(1));
+        const double u = (x - x0)/map->resolution;
+        const double v = (y - y0)/map->resolution;
+    }
 
     //END OF TODO
 
@@ -136,7 +155,6 @@ void GaussianNewtonOptimization(map_t *map, Eigen::Vector3d &init_pose, std::vec
         {
             S_T.emplace_back(GN_TransPoint(*it, T));
         }
-        
 
         //END OF TODO
     }
