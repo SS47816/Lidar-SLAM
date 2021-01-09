@@ -129,6 +129,15 @@ void GaussianNewtonOptimization(map_t *map, Eigen::Vector3d &init_pose, std::vec
     {
         //TODO
 
+        // Transform the points based on the current best pose estimated
+        std::vector<Eigen::Vector2d> S_T;
+        const Eigen::Matrix3d T = GN_V2T(now_pose);
+        for (auto it = laser_pts.begin(); it != laser_pts.end(); it++)
+        {
+            S_T.emplace_back(GN_TransPoint(*it, T));
+        }
+        
+
         //END OF TODO
     }
     init_pose = now_pose;
