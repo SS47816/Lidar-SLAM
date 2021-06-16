@@ -1,0 +1,2 @@
+ICP_ROS
+-DCATKIN_DEVEL_PREFIX=/home/ss/ss_ws/Lidar-SLAM/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/ss/ss_ws/Lidar-SLAM/catkin_ws/install -G Unix Makefiles

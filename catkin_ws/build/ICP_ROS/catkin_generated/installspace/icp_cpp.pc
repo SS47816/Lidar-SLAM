@@ -1,0 +1,8 @@
+prefix=/home/ss/ss_ws/Lidar-SLAM/catkin_ws/install
+
+Name: icp_cpp
+Description: Description of icp_cpp
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib -licp_cpp
+Requires: Eigen3::Eigen roscpp sensor_msgs std_msgs

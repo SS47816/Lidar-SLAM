@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/ss/ss_ws/Lidar-SLAM/catkin_ws/devel/setup.sh
